@@ -1,28 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-namespace CountriesInfo
+﻿namespace CountriesInfo
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
+    using Library.Classes;
+    using Library.ClassServices;
+    using System.Collections.Generic;
+    using System.Windows;
+    using System.Windows.Documents;
+
     public partial class MainWindow : Window
     {
+        private List<Country> countries;
+        private DataService dataService;
+
         public MainWindow()
         {
             InitializeComponent();
+            dataService = new DataService();
+
+            LoadCountries();
+
         }
+
+        private async void LoadCountries()
+        {
+            Response response = await APIService.GetCountries("http://restcountries.eu", "/rest/v2/all");
+            countries = (List<Country>)response.Result;
+
+            cbb_countries.ItemsSource = countries;
+
+            dataService.DeleteData();
+
+            dataService.SaveData(countries);
+        }
+
     }
 }
