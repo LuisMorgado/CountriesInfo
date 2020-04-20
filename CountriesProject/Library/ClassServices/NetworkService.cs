@@ -5,6 +5,11 @@
 
     public class NetworkService
     {
+
+        /// <summary>
+        /// Checks if exists network connections
+        /// </summary>
+        /// <returns>Response</returns>
         public Response CheckConnection()
         {
             var client = new WebClient();

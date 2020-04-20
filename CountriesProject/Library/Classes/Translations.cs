@@ -12,5 +12,6 @@
         public string Nl { get; set; }
         public string Hr { get; set; }
         public string Fa { get; set; }
+        public string CountryCode { get; set; }
     }
 }

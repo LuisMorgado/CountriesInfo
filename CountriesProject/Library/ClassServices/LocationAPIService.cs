@@ -3,55 +3,51 @@
     using Library.Classes;
     using Newtonsoft.Json;
     using System;
-    using System.Collections.Generic;
     using System.Net.Http;
     using System.Threading.Tasks;
 
-    public static class APIService
+    /// <summary>
+    /// API connection
+    /// </summary>
+    /// <param name="baseUrl"></param>
+    /// <param name="controller"></param>
+    /// <returns>Countries</returns>
+    public class LocationAPIService
     {
-        /// <summary>
-        /// API connection
-        /// </summary>
-        /// <param name="baseUrl"></param>
-        /// <param name="controller"></param>
-        /// <returns>Countries</returns>
-        public static async Task<Response> GetCountries(string baseUrl, string controller)
+        public static async Task<Response> GetLocation(string baseUrl, string controller)
         {
             try
-            {              
+            {
                 var client = new HttpClient();
                 client.BaseAddress = new Uri(baseUrl);
 
                 var response = await client.GetAsync(controller);
-
                 var result = await response.Content.ReadAsStringAsync();
 
-                //Se algo correr mal...
                 if (!response.IsSuccessStatusCode)
                 {
                     return new Response
                     {
                         IsSuccess = false,
                         Message = result,
-
                     };
                 }
-                var countries = JsonConvert.DeserializeObject<List<Country>>(result); //Converter Json numa lista de dados do tipo rate
+                var locationResponse = JsonConvert.DeserializeObject<LocationResponse>(result);
 
                 return new Response
                 {
                     IsSuccess = true,
-                    Result = countries,
+                    Result = locationResponse,
                 };
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
                 return new Response
                 {
                     IsSuccess = false,
-                    Message = ex.Message,
+                    Result = e.Message,
                 };
             }
-        }
+        }  
     }
 }

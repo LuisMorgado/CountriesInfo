@@ -8,5 +8,6 @@ namespace Library.Classes
         public string Name { get; set; }
         public List<string> OtherAcronyms { get; set; }
         public List<string> OtherNames { get; set; }
+        public string CountryCode { get; set; }
     }
 }

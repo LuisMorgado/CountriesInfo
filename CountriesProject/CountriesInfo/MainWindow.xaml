@@ -4,9 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CountriesInfo"
+        xmlns:m="clr-namespace:Microsoft.Maps.MapControl.WPF;assembly=Microsoft.Maps.MapControl.WPF"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <ComboBox x:Name="cbb_countries" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="120"/>
+    <Grid>  
+        <m:Map x:Name="worldMap" CredentialsProvider="Aq3R2llqn0c86NeqB-LbOwxVC8hodxNHBckFcfnxDFUA5MvYUU0CGClXctL6VTdX" MouseDoubleClick="WorldMap_MouseDoubleClick"/>
     </Grid>
 </Window>

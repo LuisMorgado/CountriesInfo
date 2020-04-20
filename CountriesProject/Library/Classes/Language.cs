@@ -6,5 +6,11 @@
         public string Iso639_2 { get; set; }
         public string Name { get; set; }
         public string NativeName { get; set; }
+        public string CountryCode { get; set; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }
