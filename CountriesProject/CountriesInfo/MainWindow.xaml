@@ -6,8 +6,35 @@
         xmlns:local="clr-namespace:CountriesInfo"
         xmlns:m="clr-namespace:Microsoft.Maps.MapControl.WPF;assembly=Microsoft.Maps.MapControl.WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>  
-        <m:Map x:Name="worldMap" CredentialsProvider="Aq3R2llqn0c86NeqB-LbOwxVC8hodxNHBckFcfnxDFUA5MvYUU0CGClXctL6VTdX" MouseDoubleClick="WorldMap_MouseDoubleClick"/>
+        Title="MainWindow" Height="450" Width="800" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Background="#C0C0C0">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Row="1" Margin="10">
+            <Grid>
+                <TextBox x:Name="txt_search" Background="White" Padding="10 0 25 0"/>
+                <Button x:Name="btn_seacrh" HorizontalAlignment="Right" Width="50" Click="Btn_seacrh_Click">Search</Button>
+            </Grid>
+            <Label HorizontalAlignment="left" FontWeight="Bold">Country Name:</Label>
+            <Label x:Name="lbl_countryName" Content="" Padding="5, 5, 0, 10" Width="135" HorizontalAlignment="left"/>
+            
+            <Label HorizontalAlignment="left" FontWeight="Bold">Capital:</Label>
+            <Label x:Name="lbl_countryCapital" Content="" Padding="5, 5, 0, 10" Width="135" HorizontalAlignment="left"/>
+            
+            <Label HorizontalAlignment="left" FontWeight="Bold">Country population:</Label>
+            <Label x:Name="lbl_countryPopulation" Content="" Padding="5, 5, 0, 10" Width="135" HorizontalAlignment="left"/>
+            
+            <Label x:Name="lbl_loadingCountries" Content="Label" Padding="5, 5, 0, 10" FontWeight="Bold" Margin="0, 155, 0, 0"/>
+        </StackPanel>
+        <StackPanel x:Name="stackPanelMap" Grid.Column="1" Grid.Row="1">
+            <m:Map x:Name="worldMap"  Mode="AerialWithLabels" CredentialsProvider="Aq3R2llqn0c86NeqB-LbOwxVC8hodxNHBckFcfnxDFUA5MvYUU0CGClXctL6VTdX" MouseDoubleClick="WorldMap_MouseDoubleClick" Background="LightGray" Height="400"/>
+        </StackPanel>
     </Grid>
 </Window>

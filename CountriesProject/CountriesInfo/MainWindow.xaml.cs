@@ -3,6 +3,7 @@
     using Library.Classes;
     using Library.ClassServices;
     using Microsoft.Maps.MapControl.WPF;
+    using System;
     using System.Collections.Generic;
     using System.Windows;
 
@@ -10,13 +11,17 @@
     {
         private List<Country> countries;
         private DataService dataService;
+        private List<Currency> currencies;
+        private NetworkService networkService;
+        private DialogService dialogService;
 
         public MainWindow()
         {
             InitializeComponent();
             dataService = new DataService();
-
-            //LoadCountries();
+            networkService = new NetworkService();
+            dialogService = new DialogService();
+            LoadCountries();
         }
 
         private async void LoadCountries()
@@ -38,7 +43,7 @@
             // Determin the location to place the pushpin at on the map.
 
             //Get the mouse click coordinates
-            Point mousePosition = e.GetPosition(this);
+            Point mousePosition = e.GetPosition(stackPanelMap);
             //Convert the mouse coordinates to a locatoin on the map
             Location pinLocation = worldMap.ViewportPointToLocation(mousePosition);
 
@@ -48,16 +53,41 @@
             Response response = await LocationAPIService.GetLocation(baseURL, controller);
 
             LocationResponse locationResponse = (LocationResponse)response.Result;
+
+            try
+            {
+                string isoCode = locationResponse.ResourceSets[0].Resources[0].Address.CountryRegionIso2;
+
+                Country countryCode = new Country();
+
+                foreach (var country in countries)
+                {
+                    if (country.Alpha2Code == isoCode)
+                    {
+                        countryCode = country;
+                    }
+                }
+
+                if (countryCode == null)
+                {
+                    dialogService.ShowMessage("Error", "Could not find a macth");
+                }
+                else
+                {
+                    lbl_countryName.Content = countryCode.Name;
+                    lbl_countryCapital.Content = countryCode.Capital;
+                    lbl_countryPopulation.Content = countryCode.Population;
+                }
+            }
+            catch (Exception r)
+            {
+                dialogService.ShowMessage("Error", r.Message);
+            }
         }
 
-        //private void LoadRegionalBlocs()
-        //{
-        //    RegionalBlocsDataService regionalBlocsDataService = new RegionalBlocsDataService();
+        private void Btn_seacrh_Click(object sender, RoutedEventArgs e)
+        {
 
-        //    List<RegionalBlocs> regionalBlocs = regionalBlocsDataService.GetData();
-
-        //    cbb_regionalBlocs.ItemsSource = regionalBlocs;
-        //}
-
+        }
     }
 }
