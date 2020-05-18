@@ -24,6 +24,7 @@
                 var response = await client.GetAsync(controller);
                 var result = await response.Content.ReadAsStringAsync();
 
+
                 if (!response.IsSuccessStatusCode)
                 {
                     return new Response
@@ -32,7 +33,11 @@
                         Message = result,
                     };
                 }
-                var locationResponse = JsonConvert.DeserializeObject<LocationResponse>(result);
+
+                var locationResponse = JsonConvert.DeserializeObject<LocationResponse>(result, new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore
+                }); //Converter Json numa lista de dados do tipo country);
 
                 return new Response
                 {

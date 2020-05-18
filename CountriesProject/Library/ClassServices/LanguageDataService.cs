@@ -24,7 +24,7 @@
                 Directory.CreateDirectory("Data");
             }
 
-            var path = @"Data\Languages.sqlite";
+            var path = @"Data\Countries.sqlite";
 
             try
             {

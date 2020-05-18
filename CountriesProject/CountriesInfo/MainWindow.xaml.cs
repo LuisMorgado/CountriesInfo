@@ -12,14 +12,18 @@
     using System.Drawing;
     using System.Windows.Interop;
     using Point = System.Windows.Point;
+    using System.Net;
+    using System.Linq;
 
     public partial class MainWindow : Window
     {
         private List<Country> countries;
         private DataService dataService;
         private List<Currency> currencies;
+        private CurrencyDataService currencyDataService;
         private NetworkService networkService;
         private DialogService dialogService;
+        private APIService apiService;
 
         public MainWindow()
         {
@@ -27,6 +31,10 @@
             dataService = new DataService();
             networkService = new NetworkService();
             dialogService = new DialogService();
+            apiService = new APIService();
+            currencies = new List<Currency>();
+            currencyDataService = new CurrencyDataService();
+            countries = new List<Country>();
             LoadCountriesBD();
         }
 
@@ -34,18 +42,18 @@
         {
             bool load;
 
-            lbl_loadingInfo.Content = "Updating info...";
-
             var connetion = networkService.CheckConnection();
 
             if (!connetion.IsSuccess)
             {
                 LoadLocalCountries();
-                load = false;
+                progressBar.Value = 100;
+                //load = false;
                 return;
             }
             else
             {
+                lbl_loadingInfo.Content = "Updating info...";
                 await LoadCountriesAPI();
                 load = true;
             }
@@ -60,13 +68,12 @@
 
             if (load)
             {
-                lbl_status.Content = string.Format("Taxas carregadas da internet em {0:f}", DateTime.Now);
+                lbl_status.Content = string.Format("Counties loaded from API in {0:f}", DateTime.Now);
             }
             else
             {
-                lbl_status.Content = string.Format("Taxas carregadas da dase de dados");
+                lbl_status.Content = string.Format("Counties loaded from Data Base");
             }
-
 
             progressBar.Value = 100;
         }
@@ -80,7 +87,8 @@
         {
             progressBar.Value = 0;
 
-            Response response = await APIService.GetCountries("http://restcountries.eu", "/rest/v2/all");
+            Response response = await apiService.GetCountries("http://restcountries.eu", "/rest/v2/all");
+
             countries = (List<Country>)response.Result;
 
             dataService.DeleteData();
@@ -133,19 +141,29 @@
                     lbl_regiao.Content = countryCode.Region;
                     lbl_subRegion.Content = countryCode.Subregion;
                     lbl_gini.Content = countryCode.Gini;
-                    imgFlags.Source = Bitmap2BitmapImage(SvgDocument.Open($@"Data\imgs\{countryCode.Alpha2Code}.svg").Draw());
+                    list_currencies.ItemsSource = countryCode.Currencies;
+                    try
+                    {
+                        imgFlags.Source = Bitmap2BitmapImage(SvgDocument.Open($@"Data\imgs\{countryCode.Alpha2Code}.svg").Draw());
+                    }
+                    catch (Exception)
+                    {
+
+                        dialogService.ShowMessage("Error", "Flag not found");
+                        string fileName = $"{Environment.CurrentDirectory}\\Data\\Imgs\\Default.svg";
+                        imgFlags.Source = Bitmap2BitmapImage(SvgDocument.Open(fileName).Draw());
+                    }
+
                 }
             }
-            catch (Exception r)
+            catch (Exception ex)
             {
-                dialogService.ShowMessage("Error", r.Message);
+                dialogService.ShowMessage("Error", ex.Message);
             }
         }
 
         private void Btn_seacrh_Click(object sender, RoutedEventArgs e)
         {
-
-
             foreach (var country in countries)
             {
                 if (txt_search.Text == country.Name)
@@ -156,7 +174,18 @@
                     lbl_regiao.Content = country.Region;
                     lbl_subRegion.Content = country.Subregion;
                     lbl_gini.Content = country.Gini;
-                    imgFlags.Source = Bitmap2BitmapImage(SvgDocument.Open($@"Data\imgs\{country.Alpha2Code}.svg").Draw());
+                    list_currencies.ItemsSource = country.Currencies;
+                    try
+                    {
+                        imgFlags.Source = Bitmap2BitmapImage(SvgDocument.Open($@"Data\imgs\{country.Alpha2Code}.svg").Draw());
+                    }
+                    catch (Exception)
+                    {
+                        dialogService.ShowMessage("Error", "Flag not found");
+                        string fileName = $"{Environment.CurrentDirectory}\\Data\\Imgs\\Default.svg";
+                        imgFlags.Source = Bitmap2BitmapImage(SvgDocument.Open(fileName).Draw());
+                    }
+
                 }
             }
         }
@@ -169,5 +198,6 @@
                            Int32Rect.Empty,
                            BitmapSizeOptions.FromEmptyOptions());
         }
+
     }
 }

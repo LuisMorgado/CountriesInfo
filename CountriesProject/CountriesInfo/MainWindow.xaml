@@ -6,14 +6,14 @@
         xmlns:local="clr-namespace:CountriesInfo"
         xmlns:m="clr-namespace:Microsoft.Maps.MapControl.WPF;assembly=Microsoft.Maps.MapControl.WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="560" Width="900" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Background="#C0C0C0">
+        Title="MainWindow" Height="725" Width="1100" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Background="#C0C0C0">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="350"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
@@ -40,14 +40,43 @@
             <Label HorizontalAlignment="left" FontWeight="Bold">Country Gini:</Label>
             <Label x:Name="lbl_gini" Content="" Padding="5, 0, 0, 10" Width="135" HorizontalAlignment="left"/>
 
+            <Label HorizontalAlignment="left" FontWeight="Bold">Country currency:</Label>
+            <ListBox x:Name="list_currencies"  Width="135" HorizontalAlignment="left" Height="26" BorderBrush="{x:Null}" Background="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" />
 
             <!--<Label x:Name="lbl_loadingCountries" Content="" Padding="5, 5, 0, 10" FontWeight="Bold" Margin="0, 63, 0, 0"/>-->
-            <Image x:Name="imgFlags" Height="94" Margin="0,0,145,0"/>
-            <Label x:Name="lbl_loadingInfo" Content="Label"/>
-            <Label x:Name="lbl_status" Content="Label"/>
+            <Image x:Name="imgFlags" Height="94" Margin="0,0,145,0" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left">
+                <Image.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform Y="100"/>
+                    </TransformGroup>
+                </Image.RenderTransform>
+            </Image>
+            <Label x:Name="lbl_loadingInfo" Content="" RenderTransformOrigin="0.5,0.5" >
+                <Label.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform Y="120"/>
+                    </TransformGroup>
+                </Label.RenderTransform>
+            </Label>
+            <Label x:Name="lbl_status" Content="" RenderTransformOrigin="0.5,0.5">
+                <Label.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform Y="120"/>
+                    </TransformGroup>
+                </Label.RenderTransform>
+            </Label>
         </StackPanel>
-        <StackPanel x:Name="stackPanelMap" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2">
-            <m:Map x:Name="worldMap"  Mode="AerialWithLabels" CredentialsProvider="Aq3R2llqn0c86NeqB-LbOwxVC8hodxNHBckFcfnxDFUA5MvYUU0CGClXctL6VTdX" MouseDoubleClick="WorldMap_MouseDoubleClick" Background="LightGray" Height="422" />
+        <StackPanel x:Name="stackPanelMap" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Margin="10">
+            <m:Map x:Name="worldMap" ZoomLevel="3" Mode="AerialWithLabels" CredentialsProvider="Aq3R2llqn0c86NeqB-LbOwxVC8hodxNHBckFcfnxDFUA5MvYUU0CGClXctL6VTdX" MouseDoubleClick="WorldMap_MouseDoubleClick" Background="LightGray" Height="422" />
 
             <ProgressBar x:Name="progressBar" Height="29" Margin="0, 25, 0, 0" Minimum="0" Maximum="100" />
             <TextBlock Text="{Binding ElementName=progressBar, Path=Value, StringFormat={}{0:0}%}" HorizontalAlignment="Center" VerticalAlignment="Center" />

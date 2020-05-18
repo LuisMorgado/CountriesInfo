@@ -24,7 +24,7 @@
                 Directory.CreateDirectory("Data");
             }
 
-            var path = @"Data\RegionalBlocs.sqlite";
+            var path = @"Data\Countries.sqlite";
 
             try
             {

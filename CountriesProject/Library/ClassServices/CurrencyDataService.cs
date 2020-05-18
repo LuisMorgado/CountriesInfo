@@ -25,14 +25,14 @@
                 Directory.CreateDirectory("Data");
             }
 
-            var path = @"Data\Currencies.sqlite";
+            var path = @"Data\Countries.sqlite";
 
             try
             {
                 connection = new SQLiteConnection("Data Source =" + path);
                 connection.Open();
 
-                string sqlCommand = "create table if not exists currencies (code varchar(30), name varchar(30), symbol varchar(5), countryCode varchar(50))";
+                string sqlCommand = "create table if not exists currencies (code varchar(30), name varchar(30), symbol varchar(5), countryCode varchar(50), foreign key(countryCode) references countries(numericCode))";
 
                 command = new SQLiteCommand(sqlCommand, connection);
                 command.ExecuteNonQuery();
@@ -54,7 +54,7 @@
             {
                 foreach (var currency in currencies)
                 {
-                    string sql = string.Format("insert into currencies (code, name, symbol, countryCode) select '{0}', \"{1}\", '{2}', '{3}' where not exists(select 1 from currencies where code = '{0}' and name like \"{1}\")", currency.Code, currency.Name, currency.Symbol, countryCode);
+                    string sql = string.Format("insert into currencies (code, name, symbol, countryCode) values ('{0}', \"{1}\", '{2}', '{3}')", currency.Code, currency.Name, currency.Symbol, countryCode);
 
                     command = new SQLiteCommand(sql, connection);
                     command.ExecuteNonQuery();
@@ -74,7 +74,7 @@
         public List<Currency> GetData()
         {
             List<Currency> currencies = new List<Currency>();
-
+            
             try
             {
                 string sql = "select code, name, symbol, countryCode from currencies";
@@ -87,10 +87,10 @@
                 {
                     currencies.Add(new Currency
                     {
-                        Code = (string)reader["code"],
-                        Name = (string)reader["name"],
-                        Symbol = (string)reader["symbol"],
-                        CountryCode = (string)reader["countryCode"],
+                        Code = reader["code"].ToString(),
+                        Name = reader["name"].ToString(),
+                        Symbol = reader["symbol"].ToString(),
+                        CountryCode = reader["countryCode"].ToString(),
                     });
                 }
                 connection.Close();
