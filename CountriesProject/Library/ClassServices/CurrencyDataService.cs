@@ -48,13 +48,13 @@
         /// Saving data of Currencies in SQL with insert command
         /// </summary>
         /// <param name="currencies"></param>
-        public void SaveData(List<Currency> currencies, string countryCode)
+        public void SaveData(List<Currency> currencies, string alpha3Code)
         {
             try
             {
                 foreach (var currency in currencies)
                 {
-                    string sql = string.Format("insert into currencies (code, name, symbol, countryCode) values ('{0}', \"{1}\", '{2}', '{3}')", currency.Code, currency.Name, currency.Symbol, countryCode);
+                    string sql = string.Format("insert into currencies (code, name, symbol, countryCode) values ('{0}', \"{1}\", '{2}', '{3}')", currency.Code, currency.Name, currency.Symbol, alpha3Code);
 
                     command = new SQLiteCommand(sql, connection);
                     command.ExecuteNonQuery();
@@ -119,6 +119,38 @@
                 dialogService.ShowMessage("Error", e.Message);
             }
 
+        }
+
+        public List<Currency> GetCurrenciesByCountryCode(string alpha3Code)
+        {
+            List<Currency> currencies = new List<Currency>();
+            
+            try
+            {
+                string sql = $"select code, name, symbol, countryCode from currencies where countryCode = '{alpha3Code}'";
+
+                command = new SQLiteCommand(sql, connection);
+
+                SQLiteDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    currencies.Add(new Currency
+                    {
+                        Code = reader["code"].ToString(),
+                        Name = reader["name"].ToString(),
+                        Symbol = reader["symbol"].ToString(),
+                        CountryCode = reader["countryCode"].ToString(),
+                    });
+                }
+                connection.Close();
+                return currencies;
+            }
+            catch (Exception e)
+            {
+                dialogService.ShowMessage("Error", e.Message);
+                return null;
+            }
         }
     }
 }

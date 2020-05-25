@@ -5,6 +5,7 @@
     using System.Collections.Generic;
     using System.Data.SQLite;
     using System.IO;
+    using System.Threading.Tasks;
 
     public class DataService
     {
@@ -52,32 +53,35 @@
         /// Saving data of Countries in SQL with insert command
         /// </summary>
         /// <param name="countries"></param>
-        public void SaveData(List<Country> countries)
+        public async Task SaveData(List<Country> countries)
         {
-            try
+            await Task.Run(() =>
             {
-                foreach (var country in countries)
+                try
                 {
-                    string sql = string.Format("insert into countries (name, alpha2Code, alpha3Code, capital, region, subregion, population, demonym, area, gini, nativeName, numericCode, cioc) values (\"{0}\", '{1}', '{2}', \"{3}\", '{4}', '{5}', {6}, '{7}', '{8}', '{9}', \"{10}\", '{11}', '{12}')", country.Name, country.Alpha2Code, country.Alpha3Code, country.Capital, country.Region, country.Subregion, country.Population, country.Demonym, country.Area, country.Gini, country.NativeName, country.NumericCode, country.Cioc);
+                    foreach (var country in countries)
+                    {
+                        string sql = string.Format("insert into countries (name, alpha2Code, alpha3Code, capital, region, subregion, population, demonym, area, gini, nativeName, numericCode, cioc) values (\"{0}\", '{1}', '{2}', \"{3}\", '{4}', '{5}', {6}, '{7}', '{8}', '{9}', \"{10}\", '{11}', '{12}')", country.Name, country.Alpha2Code, country.Alpha3Code, country.Capital, country.Region, country.Subregion, country.Population, country.Demonym, country.Area, country.Gini, country.NativeName, country.NumericCode, country.Cioc);
 
-                    command = new SQLiteCommand(sql, connection);
-                    command.ExecuteNonQuery();
+                        command = new SQLiteCommand(sql, connection);
+                        command.ExecuteNonQuery();
 
-                    currencyDataService = new CurrencyDataService();
-                    currencyDataService.SaveData(country.Currencies, country.NumericCode);
+                        currencyDataService = new CurrencyDataService();
+                        currencyDataService.SaveData(country.Currencies, country.Alpha3Code);
 
-                    languageDataService = new LanguageDataService();
-                    languageDataService.SaveData(country.Languages, country.NumericCode);
+                        languageDataService = new LanguageDataService();
+                        languageDataService.SaveData(country.Languages, country.Alpha3Code);
 
-                    regionalBlocsDataService = new RegionalBlocsDataService();
-                    regionalBlocsDataService.SaveData(country.RegionalBlocs, country.NumericCode);
+                        regionalBlocsDataService = new RegionalBlocsDataService();
+                        regionalBlocsDataService.SaveData(country.RegionalBlocs, country.Alpha3Code);
+                    }
+                    connection.Close();
                 }
-                connection.Close();
-            }
-            catch (Exception e)
-            {
-                dialogService.ShowMessage("Error", e.Message);
-            }
+                catch (Exception e)
+                {
+                    dialogService.ShowMessage("Error", e.Message);
+                }
+            });
         }
 
         /// <summary>
@@ -87,6 +91,7 @@
         public List<Country> GetData()
         {
             List<Country> countries = new List<Country>();
+            
 
             try
             {
@@ -98,6 +103,7 @@
 
                 while (reader.Read())
                 {
+                    currencyDataService = new CurrencyDataService();
                     countries.Add
                         (new Country
                         {
@@ -114,7 +120,9 @@
                             NativeName = reader["nativeName"].ToString(),
                             NumericCode = reader["numericCode"].ToString(),
                             Cioc = reader["cioc"].ToString(),
+                            Currencies = currencyDataService.GetCurrenciesByCountryCode(reader["alpha3Code"].ToString()),
                         });
+
                 }
 
                 connection.Close();

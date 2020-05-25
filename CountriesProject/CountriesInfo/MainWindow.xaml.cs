@@ -44,7 +44,7 @@
 
             var connetion = networkService.CheckConnection();
 
-            if (!connetion.IsSuccess)
+            if (connetion.IsSuccess)
             {
                 LoadLocalCountries();
                 progressBar.Value = 100;
@@ -53,7 +53,7 @@
             }
             else
             {
-                lbl_loadingInfo.Content = "Updating info...";
+                lbl_loadingInfo.Content = "Updating info from API...";
                 await LoadCountriesAPI();
                 load = true;
             }
@@ -74,8 +74,6 @@
             {
                 lbl_status.Content = string.Format("Counties loaded from Data Base");
             }
-
-            progressBar.Value = 100;
         }
 
         private void LoadLocalCountries()
@@ -88,12 +86,16 @@
             progressBar.Value = 0;
 
             Response response = await apiService.GetCountries("http://restcountries.eu", "/rest/v2/all");
+            progressBar.Value = 33;
 
             countries = (List<Country>)response.Result;
 
             dataService.DeleteData();
+            progressBar.Value = 66;
 
-            dataService.SaveData(countries);
+            await dataService.SaveData(countries);
+            progressBar.Value = 100;
+
         }
 
         private async void WorldMap_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
