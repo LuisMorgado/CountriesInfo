@@ -11,14 +11,15 @@
 
     public class APIService
     {
-        private DialogService dialogService;
+        DialogService dialogService = new DialogService();
+        
         /// <summary>
         /// API connection
         /// </summary>
         /// <param name="baseUrl"></param>
         /// <param name="controller"></param>
         /// <returns>Countries</returns>
-        public async Task<Response> GetCountries(string baseUrl, string controller)
+        public async Task<Response> GetCountries(string baseUrl, string controller, IProgress<ProgressReport> progress)
         {
             try
             {
@@ -43,7 +44,9 @@
                 {
                     NullValueHandling = NullValueHandling.Ignore
                 }); //Converter Json numa lista de dados do tipo country
-                await FlagsDownloadAPI(countries);
+
+
+                await FlagsDownloadAPI(countries, progress);
 
                 return new Response
                 {
@@ -65,9 +68,12 @@
         /// get flags from API
         /// </summary>
         /// <param name="countries"></param>
-        public async Task FlagsDownloadAPI(List<Country> countries)
+        public async Task FlagsDownloadAPI(List<Country> countries, IProgress<ProgressReport> progress)
         {
             WebClient client = new WebClient();
+            ProgressReport progressReport = new ProgressReport();
+            byte p = 1;
+
             await Task.Run(() =>
             {
                 try
@@ -80,11 +86,14 @@
                     foreach (var country in countries)
                     {
                         client.DownloadFile(new Uri(country.Flag.AbsoluteUri), $@"Data\Imgs\{country.Alpha2Code}.svg");
+
+                        progressReport.Percentage = Convert.ToByte(((p * 100) / countries.Count));
+                        progress.Report(progressReport);
+                        p++;
                     }
 
-                    var noFlag = new WebClient();
-                    noFlag.DownloadFile("https://upload.wikimedia.org/wikipedia/commons/b/b0/No_flag.svg", $@"Data\Imgs\Default.svg");
-                    noFlag.Dispose();
+                    client.DownloadFile("https://upload.wikimedia.org/wikipedia/commons/b/b0/No_flag.svg", $@"Data\Imgs\Default.svg");
+                    client.Dispose(); // serve para o webCLient nao ficar em memoria
                 }
                 catch (Exception)
                 {

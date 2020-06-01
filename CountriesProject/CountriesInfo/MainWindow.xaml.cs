@@ -35,25 +35,24 @@
             currencies = new List<Currency>();
             currencyDataService = new CurrencyDataService();
             countries = new List<Country>();
-            LoadCountriesBD();
+            LoadCountriesAPI_BD();
         }
 
-        private async void LoadCountriesBD()
+        private async void LoadCountriesAPI_BD()
         {
             bool load;
 
             var connetion = networkService.CheckConnection();
 
-            if (connetion.IsSuccess)
+            if (!connetion.IsSuccess)
             {
                 LoadLocalCountries();
-                progressBar.Value = 100;
-                //load = false;
+                lbl_loadingInfo.Content = "Countries loades from Data Base";
                 return;
             }
             else
             {
-                lbl_loadingInfo.Content = "Updating info from API...";
+                
                 await LoadCountriesAPI();
                 load = true;
             }
@@ -81,21 +80,49 @@
             countries = dataService.GetData();
         }
 
+        private void ReportProgress(object sender, ProgressReport e)
+        {
+            progressBar.Value = e.Percentage;
+            if (e.Percentage != 100)
+            {
+                lbl_loadingInfo.Content = "Loading countries from API...";
+            }
+            else
+            {
+                lbl_loadingInfo.Content = "Countries loaded from API";
+            }
+        }
+
+        private void ReportProgressDB(object sender, ProgressReport e)
+        {
+            progressBar.Value = e.Percentage;
+
+            if (e.Percentage != 100)
+            {
+                lbl_loadingInfo.Content = "Saving countries to Database...";
+            }
+            else
+            {
+                lbl_loadingInfo.Content = "Countries saved to Database";
+            }
+        }
+
         private async Task LoadCountriesAPI()
         {
-            progressBar.Value = 0;
 
-            Response response = await apiService.GetCountries("http://restcountries.eu", "/rest/v2/all");
-            progressBar.Value = 33;
+            Progress<ProgressReport> apiProgress = new Progress<ProgressReport>();
+            apiProgress.ProgressChanged += ReportProgress;
+
+            Response response = await apiService.GetCountries("http://restcountries.eu", "/rest/v2/all", apiProgress);
 
             countries = (List<Country>)response.Result;
 
             dataService.DeleteData();
-            progressBar.Value = 66;
 
-            await dataService.SaveData(countries);
-            progressBar.Value = 100;
+            Progress<ProgressReport> bdProgress = new Progress<ProgressReport>();
+            bdProgress.ProgressChanged += ReportProgressDB;
 
+            await dataService.SaveData(countries, bdProgress);
         }
 
         private async void WorldMap_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)

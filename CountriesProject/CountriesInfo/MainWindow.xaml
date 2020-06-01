@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:CountriesInfo"
         xmlns:m="clr-namespace:Microsoft.Maps.MapControl.WPF;assembly=Microsoft.Maps.MapControl.WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="725" Width="1100" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Background="#C0C0C0">
+        Title="MainWindow" Height="725" Width="1100" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Background="#FFEAEAEA">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
@@ -79,7 +79,7 @@
             <m:Map x:Name="worldMap" ZoomLevel="3" Mode="AerialWithLabels" CredentialsProvider="Aq3R2llqn0c86NeqB-LbOwxVC8hodxNHBckFcfnxDFUA5MvYUU0CGClXctL6VTdX" MouseDoubleClick="WorldMap_MouseDoubleClick" Background="LightGray" Height="422" />
 
             <ProgressBar x:Name="progressBar" Height="29" Margin="0, 25, 0, 0" Minimum="0" Maximum="100" />
-            <TextBlock Text="{Binding ElementName=progressBar, Path=Value, StringFormat={}{0:0}%}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <TextBlock x:Name="progressPercentage" Text="{Binding ElementName=progressBar, Path=Value, StringFormat={}{0:0}%}" HorizontalAlignment="Center" VerticalAlignment="Center" />
         </StackPanel>
     </Grid>
 </Window>

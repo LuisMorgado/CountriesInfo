@@ -53,8 +53,11 @@
         /// Saving data of Countries in SQL with insert command
         /// </summary>
         /// <param name="countries"></param>
-        public async Task SaveData(List<Country> countries)
+        public async Task SaveData(List<Country> countries, IProgress<ProgressReport> progress)
         {
+            ProgressReport report = new ProgressReport();
+            byte p = 1;
+
             await Task.Run(() =>
             {
                 try
@@ -74,6 +77,10 @@
 
                         regionalBlocsDataService = new RegionalBlocsDataService();
                         regionalBlocsDataService.SaveData(country.RegionalBlocs, country.Alpha3Code);
+
+                        report.Percentage = Convert.ToByte((p * 100) / countries.Count);
+                        progress.Report(report);
+                        p++;
                     }
                     connection.Close();
                 }
@@ -91,7 +98,7 @@
         public List<Country> GetData()
         {
             List<Country> countries = new List<Country>();
-            
+
 
             try
             {
