@@ -121,6 +121,11 @@
 
         }
 
+        /// <summary>
+        /// getting currencies through an alphaCod3 with a select
+        /// </summary>
+        /// <param name="alpha3Code"></param>
+        /// <returns></returns>
         public List<Currency> GetCurrenciesByCountryCode(string alpha3Code)
         {
             List<Currency> currencies = new List<Currency>();

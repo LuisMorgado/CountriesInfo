@@ -93,11 +93,11 @@
                     }
 
                     client.DownloadFile("https://upload.wikimedia.org/wikipedia/commons/b/b0/No_flag.svg", $@"Data\Imgs\Default.svg");
-                    client.Dispose(); // serve para o webCLient nao ficar em memoria
+                    client.Dispose(); //clean up webCLient from memory
                 }
                 catch (Exception)
                 {
-                    dialogService.ShowMessage("Error", "Falg not found");
+                    dialogService.ShowMessage("Error", "Flag not found");
                 }
             });
 

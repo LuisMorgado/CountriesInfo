@@ -19,8 +19,6 @@
     {
         private List<Country> countries;
         private DataService dataService;
-        private List<Currency> currencies;
-        private CurrencyDataService currencyDataService;
         private NetworkService networkService;
         private DialogService dialogService;
         private APIService apiService;
@@ -32,13 +30,14 @@
             networkService = new NetworkService();
             dialogService = new DialogService();
             apiService = new APIService();
-            currencies = new List<Currency>();
-            currencyDataService = new CurrencyDataService();
             countries = new List<Country>();
-            LoadCountriesAPI_BD();
+            LoadCountriesAPI_DB();
         }
 
-        private async void LoadCountriesAPI_BD()
+        /// <summary>
+        /// Load countries from API or Database in case the download from API doesnt't work, countries will be downloaded from Database
+        /// </summary>
+        private async void LoadCountriesAPI_DB()
         {
             bool load;
 
@@ -48,11 +47,13 @@
             {
                 LoadLocalCountries();
                 lbl_loadingInfo.Content = "Countries loades from Data Base";
+                progressBar.Visibility = Visibility.Hidden;
+                progressPercentage.Visibility = Visibility.Hidden;
                 return;
             }
             else
             {
-                
+
                 await LoadCountriesAPI();
                 load = true;
             }
@@ -107,6 +108,10 @@
             }
         }
 
+        /// <summary>
+        /// Load countries from API
+        /// </summary>
+        /// <returns></returns>
         private async Task LoadCountriesAPI()
         {
 
@@ -164,13 +169,19 @@
                 }
                 else
                 {
-                    lbl_countryName.Content = countryCode.Name;
-                    lbl_countryCapital.Content = countryCode.Capital;
-                    lbl_countryPopulation.Content = countryCode.Population;
-                    lbl_regiao.Content = countryCode.Region;
-                    lbl_subRegion.Content = countryCode.Subregion;
-                    lbl_gini.Content = countryCode.Gini;
+                    lbl_countryName.Content = MissInfo(countryCode.Name);
+                    lbl_countryCapital.Content = MissInfo(countryCode.Capital);
+                    lbl_countryPopulation.Content = MissInfo(countryCode.Population.ToString());
+                    lbl_regiao.Content = MissInfo(countryCode.Region);
+                    lbl_subRegion.Content = MissInfo(countryCode.Subregion);
+                    lbl_gini.Content = MissInfo(countryCode.Gini.ToString());
                     list_currencies.ItemsSource = countryCode.Currencies;
+                    lbl_symbol.Content = string.Empty;
+                    foreach (var currency in countryCode.Currencies)
+                    {
+                        lbl_symbol.Content += currency.Symbol;
+                    }
+
                     try
                     {
                         imgFlags.Source = Bitmap2BitmapImage(SvgDocument.Open($@"Data\imgs\{countryCode.Alpha2Code}.svg").Draw());
@@ -184,6 +195,7 @@
                     }
 
                 }
+                txt_search.Text = string.Empty;
             }
             catch (Exception ex)
             {
@@ -197,13 +209,19 @@
             {
                 if (txt_search.Text == country.Name)
                 {
-                    lbl_countryName.Content = country.Name;
-                    lbl_countryCapital.Content = country.Capital;
-                    lbl_countryPopulation.Content = country.Population;
-                    lbl_regiao.Content = country.Region;
-                    lbl_subRegion.Content = country.Subregion;
-                    lbl_gini.Content = country.Gini;
+                    lbl_countryName.Content = MissInfo(country.Name);
+                    lbl_countryCapital.Content = MissInfo(country.Capital);
+                    lbl_countryPopulation.Content = MissInfo(country.Population.ToString());
+                    lbl_regiao.Content = MissInfo(country.Region);
+                    lbl_subRegion.Content = MissInfo(country.Subregion);
+                    lbl_gini.Content = MissInfo(country.Gini.ToString());
                     list_currencies.ItemsSource = country.Currencies;
+                    lbl_symbol.Content = string.Empty;
+                    foreach (var currency in country.Currencies)
+                    {
+                        lbl_symbol.Content += currency.Symbol;
+                    }
+
                     try
                     {
                         imgFlags.Source = Bitmap2BitmapImage(SvgDocument.Open($@"Data\imgs\{country.Alpha2Code}.svg").Draw());
@@ -215,10 +233,18 @@
                         imgFlags.Source = Bitmap2BitmapImage(SvgDocument.Open(fileName).Draw());
                     }
 
+                    return;
                 }
             }
+
+            dialogService.ShowMessage("Info", "Country not found");
         }
 
+        /// <summary>
+        ///Convert flags 
+        /// </summary>
+        /// <param name="bitmap"></param>
+        /// <returns></returns>
         private BitmapSource Bitmap2BitmapImage(Bitmap bitmap)
         {
             return Imaging.CreateBitmapSourceFromHBitmap(
@@ -226,6 +252,27 @@
                            IntPtr.Zero,
                            Int32Rect.Empty,
                            BitmapSizeOptions.FromEmptyOptions());
+        }
+
+        /// <summary>
+        /// In case the info doesn't exist
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        private string MissInfo(string info)
+        {
+            if (string.IsNullOrEmpty(info))
+            {
+                return "No info";
+            }
+            else if (info == "0")
+            {
+                return "No info";
+            }
+            else
+            {
+                return info;
+            }
         }
 
     }

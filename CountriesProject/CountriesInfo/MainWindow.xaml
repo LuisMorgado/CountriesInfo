@@ -43,14 +43,17 @@
             <Label HorizontalAlignment="left" FontWeight="Bold">Country currency:</Label>
             <ListBox x:Name="list_currencies"  Width="135" HorizontalAlignment="left" Height="26" BorderBrush="{x:Null}" Background="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" />
 
+            <Label HorizontalAlignment="left" FontWeight="Bold">Currency Symbol:</Label>
+            <Label x:Name="lbl_symbol" Content="" Padding="5, 0, 0, 10" Width="135" HorizontalAlignment="left"/>
+            
             <!--<Label x:Name="lbl_loadingCountries" Content="" Padding="5, 5, 0, 10" FontWeight="Bold" Margin="0, 63, 0, 0"/>-->
-            <Image x:Name="imgFlags" Height="94" Margin="0,0,145,0" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left">
+            <Image x:Name="imgFlags" Height="94" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left">
                 <Image.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>
                         <SkewTransform/>
                         <RotateTransform/>
-                        <TranslateTransform Y="100"/>
+                        <TranslateTransform Y="30"/>
                     </TransformGroup>
                 </Image.RenderTransform>
             </Image>
@@ -60,17 +63,17 @@
                         <ScaleTransform/>
                         <SkewTransform/>
                         <RotateTransform/>
-                        <TranslateTransform Y="120"/>
+                        <TranslateTransform Y="68"/>
                     </TransformGroup>
                 </Label.RenderTransform>
             </Label>
-            <Label x:Name="lbl_status" Content="" RenderTransformOrigin="0.5,0.5">
+            <Label x:Name="lbl_status" Content="" RenderTransformOrigin="0.5,0.5" >
                 <Label.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>
                         <SkewTransform/>
                         <RotateTransform/>
-                        <TranslateTransform Y="120"/>
+                        <TranslateTransform Y="68"/>
                     </TransformGroup>
                 </Label.RenderTransform>
             </Label>
@@ -80,6 +83,17 @@
 
             <ProgressBar x:Name="progressBar" Height="29" Margin="0, 25, 0, 0" Minimum="0" Maximum="100" />
             <TextBlock x:Name="progressPercentage" Text="{Binding ElementName=progressBar, Path=Value, StringFormat={}{0:0}%}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+            <Label x:Name="copyRight" Content="Copyright © 2020 Made by Luis Morgado - Version 0.1.0.0" HorizontalAlignment="Right" RenderTransformOrigin="0.5,0.5">
+                <Label.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform Y="132"/>
+                    </TransformGroup>
+                </Label.RenderTransform>
+            </Label>
         </StackPanel>
     </Grid>
 </Window>
